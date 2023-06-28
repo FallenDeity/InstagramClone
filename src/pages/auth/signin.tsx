@@ -2,6 +2,7 @@ import Image from "next/image";
 import { ClientSafeProvider, getProviders, signIn as SignIntoProvider, SignInResponse } from "next-auth/react";
 import React from "react";
 
+import CustomHead from "../../components/Head";
 import Header from "../../components/Header";
 
 interface Provider {
@@ -15,6 +16,7 @@ interface Provider {
 export default function signIn({ providers }: { providers: Provider }): React.JSX.Element {
 	return (
 		<>
+			<CustomHead title={"Sign In"} />
 			<Header />
 			<div className="flex flex-col items-center justify-center min-h-screen px-14 -mt-24 text-center">
 				<Image src="https://links.papareact.com/ocw" alt="Logo" className="w-80" width={30} height={30} />
