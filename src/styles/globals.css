@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+	.navBtn {
+		@apply h-6 hidden md:inline-flex cursor-pointer hover:scale-125 transition-all duration-150 ease-out;
+	}
+
+	.postBtn {
+		@apply h-7 hover:scale-110 transition-all duration-150 ease-out cursor-pointer;
+	}
+
+	.mobileNavBtn {
+		@apply h-6 inline-flex md:hidden cursor-pointer hover:scale-125 transition-all duration-150 ease-out;
+	}
+}
+
+.pb-full {
+	padding-bottom: 100%;
+}
+
+@media screen and (min-width: 768px) {
+	.post:hover .overlay {
+		display: block;
+		animation: fade 0.5s;
+	}
+}

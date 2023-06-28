@@ -10,7 +10,7 @@
 		"lint:fix": "eslint --ext .ts src --fix",
 		"prettier": "prettier .",
 		"prettier:fix": "prettier --write .",
-		"dev": "next dev src",
+		"dev": "next devn",
 		"build": "next build",
 		"start": "next start",
 		"coverage": "nyc npm run test"
@@ -26,6 +26,8 @@
 	"author": "FallenDeity",
 	"license": "MIT",
 	"devDependencies": {
+		"@faker-js/faker": "^8.0.2",
+		"@next/eslint-plugin-next": "^13.4.7",
 		"@types/mocha": "^10.0.1",
 		"@types/node": "^20.2.1",
 		"@typescript-eslint/eslint-plugin": "^5.59.6",
@@ -57,10 +59,21 @@
 		"bracketSameLine": true
 	},
 	"dependencies": {
+		"@headlessui/react": "^1.7.15",
+		"@heroicons/react": "^2.0.18",
+		"@tailwindcss/forms": "^0.5.3",
 		"@types/react": "^18.2.8",
+		"firebase": "^9.23.0",
 		"next": "^13.4.4",
+		"next-auth": "^4.22.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-moment": "^1.1.3",
+		"react-spinners": "^0.13.8",
+		"react-toastify": "^9.1.3",
+		"recoil": "^0.7.7",
+		"tailwind-scrollbar": "^3.0.4",
+		"tailwind-scrollbar-hide": "^1.1.7",
 		"winston": "^3.9.0"
 	}
 }
