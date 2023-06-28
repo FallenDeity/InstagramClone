@@ -183,7 +183,13 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 								{comment.comment}
 							</p>
 							<Moment fromNow className="pr-5 text-xs text-gray-500">
-								{new Date("seconds" in comment.timestamp ? comment.timestamp.seconds * 1000 : comment.timestamp)}
+								{
+									new Date(
+										"seconds" in comment.timestamp
+											? comment.timestamp.seconds * 1000
+											: comment.timestamp
+									)
+								}
 							</Moment>
 						</div>
 					))}
