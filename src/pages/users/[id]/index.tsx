@@ -132,54 +132,53 @@ export default function Users({ user }: { user: CustomUser }): React.JSX.Element
 											className="fas fa-check text-white text-xs absolute inset-x-0
                                ml-1 mt-px"></i>
 									</span>
-									{session && session.user?.uid === user.id ? (
-										<>
-											<button
-												className="bg-blue-500 px-2 py-1 font-semibold text-sm mt-2 md:py-1.5 hover:bg-blue-400 text-white
+									{session &&
+										(session.user?.uid === user.id ? (
+											<>
+												<button
+													className="bg-blue-500 px-2 py-1 font-semibold text-sm mt-2 md:py-1.5 hover:bg-blue-400 text-white
 									               rounded block text-center sm:inline-block sm:mt-0 sm:ml-2 w-full md:w-auto">
-												<Cog6ToothIcon className="h-5 w-5 inline-block mr-1" />
-												Edit Profile
-											</button>
-											<button
-												className="border border-gray-300 px-2 py-1 font-semibold text-sm mt-2 md:py-1.5 hover:bg-gray-200
+													<Cog6ToothIcon className="h-5 w-5 inline-block mr-1" />
+													Edit Profile
+												</button>
+												<button
+													className="border border-gray-300 px-2 py-1 font-semibold text-sm mt-2 md:py-1.5 hover:bg-gray-200
 									               rounded block text-center sm:inline-block sm:mt-0 sm:ml-2 w-full md:w-auto"
-												/* eslint-disable-next-line @typescript-eslint/no-misused-promises,@typescript-eslint/explicit-function-return-type */
-												onClick={() => signOut()}>
-												<ArrowsPointingOutIcon className="h-5 w-5 inline-block mr-1" />
-												Sign Out
-											</button>
-										</>
-									) : session ? (
-										<>
-											<button
-												/* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-												onClick={followUser}
-												disabled={loading}
-												className="bg-blue-500 px-2 py-1 mt-2 w-full md:w-auto
+													/* eslint-disable-next-line @typescript-eslint/no-misused-promises,@typescript-eslint/explicit-function-return-type */
+													onClick={() => signOut()}>
+													<ArrowsPointingOutIcon className="h-5 w-5 inline-block mr-1" />
+													Sign Out
+												</button>
+											</>
+										) : (
+											<>
+												<button
+													/* eslint-disable-next-line @typescript-eslint/no-misused-promises */
+													onClick={followUser}
+													disabled={loading}
+													className="bg-blue-500 px-2 py-1 mt-2 w-full md:w-auto
                         text-white font-semibold text-sm rounded block text-center md:py-1.5
                         sm:inline-block hover:bg-blue-600 sm:mt-0 sm:ml-2 disabled:bg-gray-300 disabled:cursor-not-allowed">
-												<p className="inline-block">
-													{loading && (
-														<BeatLoader
-															color="white"
-															size={4}
-															className="inline-flex mr-2"
-														/>
-													)}
-													{followers.some((follower) => follower === session?.user?.uid)
-														? "Unfollow"
-														: "Follow"}
-												</p>
-											</button>
-											<button
-												className="border border-gray-300 px-2 py-1 font-semibold text-sm mt-2 md:py-1.5 hover:bg-gray-100
+													<p className="inline-block">
+														{loading && (
+															<BeatLoader
+																color="white"
+																size={4}
+																className="inline-flex mr-2"
+															/>
+														)}
+														{followers.some((follower) => follower === session.user?.uid)
+															? "Unfollow"
+															: "Follow"}
+													</p>
+												</button>
+												<button
+													className="border border-gray-300 px-2 py-1 font-semibold text-sm mt-2 md:py-1.5 hover:bg-gray-100
 									               rounded block text-center sm:inline-block sm:mt-0 sm:ml-2 w-full md:w-auto">
-												Message
-											</button>
-										</>
-									) : (
-										<> </>
-									)}
+													Message
+												</button>
+											</>
+										))}
 								</div>
 								<ul className="hidden md:flex space-x-10 mb-4">
 									<li>

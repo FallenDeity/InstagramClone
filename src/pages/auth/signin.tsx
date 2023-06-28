@@ -1,7 +1,5 @@
 import Image from "next/image";
-import { getProviders, signIn as SignIntoProvider } from "next-auth/react";
-import { SignInResponse } from "next-auth/react";
-import { ClientSafeProvider } from "next-auth/react";
+import { ClientSafeProvider, getProviders, signIn as SignIntoProvider, SignInResponse } from "next-auth/react";
 import React from "react";
 
 import Header from "../../components/Header";
