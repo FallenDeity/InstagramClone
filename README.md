@@ -1,8 +1,28 @@
+<p align="center"><img src="./public/logo.png" alt="Logo" width="300" height="300"></p>
+<h1 align="center">Instagram Clone</h1>
+<h4 align="center">A clone of Instagram built using React, Next.js, Tailwind CSS, Firebase and more.</h4>
+
+# Features
+
+- [x] Authentication/Singup using Firebase and Google.
+- [x] Create posts with images and captions.
+- [x] Like posts.
+- [x] Comment on posts.
+- [x] Follow/Unfollow users.
+- [x] View posts of users you follow.
+- [x] View posts of a particular user.
+- [x] User profile page.
+- [x] Responsive design/Responsive UI.
+
+# Demo
+
+![Demo](./public/demo.mp4)
+
 # Setup
 
 ```bash
-$ git clone https://github.com/FallenDeity/react-next-tailwind-template
-$ cd react-next-tailwind-template
+$ git clone https://github.com/FallenDeity/InstagramClone
+$ cd InstagramClone
 $ npm install
 ```
 

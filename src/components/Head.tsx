@@ -12,6 +12,7 @@ export default function CustomHead({ title }: { title: string }): React.JSX.Elem
 			<meta property="og:title" content="Instagram clone" />
 			<meta property="og:description" content="A basic Instagram clone built with Next.js and Tailwind CSS" />
 			<meta property="og:type" content="website" />
+			<meta property="og:url" content={process.env.NEXTAUTH_URL} />
 			<meta property="og:image" content="/logo.png" />
 			<link rel="icon" href="/favicon.ico" />
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
