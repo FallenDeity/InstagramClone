@@ -8,6 +8,7 @@
 - [x] Create posts with images and captions.
 - [x] Like posts.
 - [x] Comment on posts.
+- [x] Bookmark posts.
 - [x] Follow/Unfollow users.
 - [x] View posts of users you follow.
 - [x] View posts of a particular user.
@@ -16,7 +17,7 @@
 
 # Demo
 
-![Demo](./public/demo.mp4)
+![Demo](./public/demo.gif)
 
 # Setup
 
