@@ -31,10 +31,10 @@ export default function Header(): React.JSX.Element {
 			suggestionRef.current?.classList.remove("border");
 			return;
 		}
-		suggestionRef.current?.classList.add("border");
 		const text = searchBarRef.current?.value;
 		onSnapshot(query(collection(db, "users"), where("username", ">=", text)), (snapshot) => {
 			const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
+			suggestions.length !== 0 && suggestionRef.current?.classList.add("border");
 			setSuggestions(users);
 		});
 	};
@@ -81,7 +81,7 @@ export default function Header(): React.JSX.Element {
 				</div>
 				{/* Search bar */}
 				<div className="max-w-xs">
-					<div className="relative mt-1 p-3 rounded-md">
+					<div className="relative mt-1 p-3 rounded-md ml-3">
 						<div className="absolute inset-y-0 pl-3 flex items-center pointer-events-none">
 							<MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
 						</div>
@@ -97,7 +97,7 @@ export default function Header(): React.JSX.Element {
 							ref={suggestionRef}>
 							{suggestions.map((suggestion) => (
 								<div
-									className="flex items-center p-2 cursor-pointer hover:text-blue-400 transition ease-in-out duration-150"
+									className="flex items-center p-2 cursor-pointer hover:text-blue-400 transition ease-in-out duration-150 w-full"
 									key={suggestion.id}
 									/* eslint-disable-next-line @typescript-eslint/no-misused-promises,@typescript-eslint/explicit-function-return-type */
 									onClick={() => clickUser(suggestion.id)}>
