@@ -18,6 +18,7 @@ import {
 	query,
 	serverTimestamp,
 	setDoc,
+	where,
 } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -26,7 +27,7 @@ import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
 
 import { db } from "../utils/firebase";
-import { BookmarkModel, CommentModel, LikeModel, PostModel, UserSession } from "../utils/models";
+import { BookmarkModel, CommentModel, LikeModel, PostModel, User, UserSession } from "../utils/models";
 
 export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 	const { data: session }: { data: UserSession | null | undefined } = useSession();
@@ -35,6 +36,23 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 	const [comment, setComment] = useState("");
 	const [likes, setLikes] = useState<LikeModel[]>([]);
 	const [bookmarks, setBookmarks] = useState<BookmarkModel[]>([]);
+	const [userData, setUserData] = useState<User>();
+	const [postUserData, setPostUserData] = useState<User>();
+	useEffect((): void => {
+		if (session) {
+			onSnapshot(
+				query(collection(db, "users"), where("__name__", "==", String(session.user?.uid))),
+				(snapshot) => {
+					const _userData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
+					setUserData(_userData[0]);
+				}
+			);
+		}
+		onSnapshot(query(collection(db, "users"), where("__name__", "==", String(post.userid))), (snapshot) => {
+			const _userData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
+			setPostUserData(_userData[0]);
+		});
+	}, [session, post.userid]);
 	useEffect((): void => {
 		onSnapshot(query(collection(db, "posts", post.id, "likes"), orderBy("timestamp", "desc")), (snapshot) => {
 			const _likes = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as LikeModel));
@@ -46,6 +64,13 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 	useEffect((): void => {
 		onSnapshot(query(collection(db, "posts", post.id, "comments"), orderBy("timestamp", "desc")), (snapshot) => {
 			const _comms = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as CommentModel));
+			for (const comm of _comms) {
+				onSnapshot(query(collection(db, "users"), where("__name__", "==", String(comm.userid))), (snapshot) => {
+					const _userData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
+					comm.username = _userData[0].username;
+					comm.avatar = _userData[0].avatar;
+				});
+			}
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			const _filteredComms = _comms.filter((comm) => comm.timestamp);
 			setComments(_filteredComms);
@@ -66,34 +91,34 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 		await addDoc(collection(db, "posts", post.id, "comments"), {
 			comment: commentToSend,
 			userid: session?.user?.uid,
-			username: session?.user?.name,
-			avatar: session?.user?.image,
+			username: userData?.username,
+			avatar: userData?.avatar,
 			timestamp: serverTimestamp(),
 		});
 	};
 	const likePost = async (): Promise<void> => {
 		assert(session);
-		if (likes.find((like) => like.username === session.user?.name)) {
+		if (likes.find((like) => like.userid === session.user?.uid)) {
 			await deleteDoc(doc(db, "posts", post.id, "likes", String(session.user?.uid)));
 			return;
 		}
 		await setDoc(doc(db, "posts", post.id, "likes", String(session.user?.uid)), {
-			username: session.user?.name,
+			username: userData?.username,
 			userid: session.user?.uid,
-			avatar: session.user?.image,
+			avatar: userData?.avatar,
 			timestamp: serverTimestamp(),
 		});
 	};
 	const bookmarkPost = async (): Promise<void> => {
 		assert(session);
-		if (bookmarks.find((bookmark) => bookmark.username === session.user?.name)) {
+		if (bookmarks.find((bookmark) => bookmark.userid === session.user?.uid)) {
 			await deleteDoc(doc(db, "posts", post.id, "bookmarks", String(session.user?.uid)));
 			return;
 		}
 		await setDoc(doc(db, "posts", post.id, "bookmarks", String(session.user?.uid)), {
-			username: session.user?.name,
+			username: userData?.username,
 			userid: session.user?.uid,
-			avatar: session.user?.image,
+			avatar: userData?.avatar,
 			timestamp: serverTimestamp(),
 		});
 	};
@@ -102,8 +127,8 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 			{/* Header */}
 			<div className="flex items-center p-3">
 				<Image
-					src={post.avatar}
-					alt={post.username}
+					src={String(postUserData?.avatar)}
+					alt={String(postUserData?.username)}
 					width={30}
 					height={30}
 					/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
@@ -115,7 +140,7 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 						className="font-semibold text-base cursor-pointer"
 						/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
 						onClick={() => router.push(`/users/${String(post.userid)}`)}>
-						{post.username}
+						{postUserData?.username}
 					</h2>
 					<Moment fromNow className="text-xs text-gray-500">
 						{new Date("seconds" in post.timestamp ? post.timestamp.seconds * 1000 : post.timestamp)}
@@ -125,12 +150,18 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 				<EllipsisHorizontalIcon className="postBtn" />
 			</div>
 			{/* Image */}
-			<Image src={post.image || ""} alt={post.username} className="object-cover w-full" width={30} height={30} />
+			<Image
+				src={post.image || ""}
+				alt={String(postUserData?.username)}
+				className="object-cover w-full"
+				width={30}
+				height={30}
+			/>
 			{/* Buttons */}
 			{session && (
 				<div className="flex justify-between px-4 pt-4">
 					<div className="flex space-x-4">
-						{likes.some((like) => like.username === session.user?.name) ? (
+						{likes.some((like) => like.userid === session.user?.uid) ? (
 							// eslint-disable-next-line @typescript-eslint/no-misused-promises
 							<HeartIconFilled className="postBtn text-red-500" onClick={likePost} />
 						) : (
@@ -140,7 +171,7 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 						<ChatBubbleOvalLeftIcon className="postBtn" />
 						<PaperAirplaneIcon className="postBtn -rotate-45" />
 					</div>
-					{bookmarks.some((bookmark) => bookmark.username === session.user?.name) ? (
+					{bookmarks.some((bookmark) => bookmark.userid === session.user?.uid) ? (
 						// eslint-disable-next-line @typescript-eslint/no-misused-promises
 						<BookmarkIconFilled className="postBtn text-amber-300" onClick={bookmarkPost} />
 					) : (
@@ -156,7 +187,7 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 						{likes.length} {likes.length === 1 ? "like" : "likes"}
 					</p>
 				)}
-				<span className="font-bold mr-1">{post.username}</span>
+				<span className="font-bold mr-1">{postUserData?.username}</span>
 				{post.caption}
 			</p>
 			{/* Comments */}

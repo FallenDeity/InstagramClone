@@ -1,13 +1,27 @@
 import { faker } from "@faker-js/faker";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
-import { User } from "../utils/models";
+import { db } from "../utils/firebase";
+import { User, UserSession } from "../utils/models";
 import Story from "./Story";
 
 export default function Stories(): React.JSX.Element {
 	const [suggestions, setSuggestions] = useState<User[]>([]);
-	const { data: session } = useSession();
+	const { data: session }: { data: UserSession | null | undefined } = useSession();
+	const [userData, setUserData] = useState<User>();
+	useEffect((): void => {
+		if (session) {
+			onSnapshot(
+				query(collection(db, "users"), where("__name__", "==", String(session.user?.uid))),
+				(snapshot) => {
+					const _userData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
+					setUserData(_userData[0]);
+				}
+			);
+		}
+	}, [session]);
 	useEffect(() => {
 		const suggestions: User[] = [];
 		for (let i = 0; i < 20; i++) {
@@ -18,6 +32,7 @@ export default function Stories(): React.JSX.Element {
 				avatar: faker.internet.avatar(),
 				following: [],
 				followers: [],
+				description: faker.lorem.sentence(),
 				timestamp: faker.date.past(),
 			});
 		}
@@ -25,7 +40,7 @@ export default function Stories(): React.JSX.Element {
 	}, []);
 	return (
 		<div className="flex space-x-2 p-6 bg-white mt-4 md:mt-8 border-gray-200 rounded-sm overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-200 shadow-sm">
-			{session && <Story image={String(session.user?.image)} username={String(session.user?.name)} />}
+			{session && <Story image={String(userData?.avatar)} username={String(userData?.username)} />}
 			{suggestions.map((suggestion) => (
 				<Story key={suggestion.id} image={suggestion.avatar} username={suggestion.username} />
 			))}

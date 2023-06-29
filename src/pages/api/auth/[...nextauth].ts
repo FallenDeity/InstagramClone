@@ -51,6 +51,7 @@ export default NextAuth({
 					avatar: session.user.image,
 					following: [],
 					followers: [],
+					description: "",
 					timestamp: serverTimestamp(),
 				});
 			}

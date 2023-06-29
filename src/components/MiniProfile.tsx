@@ -1,20 +1,34 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { UserSession } from "../utils/models";
+import { db } from "../utils/firebase";
+import { User, UserSession } from "../utils/models";
 
 export default function MiniProfile(): React.JSX.Element {
 	const { data: session }: { data: UserSession | null | undefined } = useSession();
 	const router = useRouter();
+	const [userData, setUserData] = useState<User>();
+	useEffect((): void => {
+		if (session) {
+			onSnapshot(
+				query(collection(db, "users"), where("__name__", "==", String(session.user?.uid))),
+				(snapshot) => {
+					const _userData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
+					setUserData(_userData[0]);
+				}
+			);
+		}
+	}, [session]);
 	return (
 		<div className="flex items-center justify-between mt-14 ml-10 bg-gray-50 p-3 border rounded-md shadow-sm">
 			<Image
 				className="rounded-full border p-[2px] w-16 h-16"
-				src={String(session?.user?.image)}
+				src={String(userData?.avatar)}
 				alt="Profile Picture"
 				width={30}
 				height={30}
@@ -24,7 +38,7 @@ export default function MiniProfile(): React.JSX.Element {
 					className="font-bold cursor-pointer"
 					/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
 					onClick={() => router.push(`/users/${String(session?.user?.uid)}`)}>
-					{session?.user?.name}
+					{userData?.username}
 				</h2>
 				<h3 className="text-sm text-gray-400">Welcome to Instagram</h3>
 			</div>

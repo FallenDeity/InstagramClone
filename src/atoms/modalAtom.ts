@@ -4,3 +4,8 @@ export const modalState = atom({
 	key: "modalState",
 	default: false,
 });
+
+export const editProfileModalState = atom({
+	key: "editProfileModalState",
+	default: false,
+});

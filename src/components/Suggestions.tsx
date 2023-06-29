@@ -21,6 +21,7 @@ export default function Suggestions(): React.JSX.Element {
 				company: faker.company.name(),
 				followers: [],
 				following: [],
+				description: faker.lorem.sentence(),
 				timestamp: faker.date.past(),
 			});
 		}

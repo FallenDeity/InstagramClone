@@ -10,7 +10,7 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 
 import { modalState } from "../atoms/modalAtom";
@@ -19,21 +19,25 @@ import { User, UserSession } from "../utils/models";
 
 export default function Header(): React.JSX.Element {
 	const { data: session }: { data: UserSession | null | undefined } = useSession();
+	const [userData, setUserData] = useState<User>();
 	const searchBarRef = useRef<HTMLInputElement>(null);
+	const suggestionRef = useRef<HTMLDivElement>(null);
+	const setOpen = useRecoilState(modalState)[1];
+	const router = useRouter();
 	const [suggestions, setSuggestions] = useState<User[]>([]);
 	const addSuggestions = (): void => {
 		if (searchBarRef.current?.value === "") {
 			setSuggestions([]);
+			suggestionRef.current?.classList.remove("border");
 			return;
 		}
+		suggestionRef.current?.classList.add("border");
 		const text = searchBarRef.current?.value;
 		onSnapshot(query(collection(db, "users"), where("username", ">=", text)), (snapshot) => {
 			const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
 			setSuggestions(users);
 		});
 	};
-	const setOpen = useRecoilState(modalState)[1];
-	const router = useRouter();
 	const clickUser = async (id: string): Promise<void> => {
 		setSuggestions([]);
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -41,6 +45,17 @@ export default function Header(): React.JSX.Element {
 		searchBarRef.current.value = "";
 		await router.push(`/users/${id}`);
 	};
+	useEffect((): void => {
+		if (session) {
+			onSnapshot(
+				query(collection(db, "users"), where("__name__", "==", String(session.user?.uid))),
+				(snapshot) => {
+					const _userData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
+					setUserData(_userData[0]);
+				}
+			);
+		}
+	}, [session]);
 	return (
 		<header className="shadow-sm border-b bg-white sticky top-0 z-40">
 			<div className="flex justify-between max-w-6xl mx-5 lg:mx-auto">
@@ -77,10 +92,12 @@ export default function Header(): React.JSX.Element {
 							placeholder="Search"
 							className="bg-gray-50 block w-full pl-10 sm:text-sm border-gray-300 rounded-md focus:ring-black focus:border-black"
 						/>
-						<div className="absolute bg-gray-100 rounded-md mt-1 z-10 border border-gray-300 divide-y max-h-44 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-300">
+						<div
+							className="absolute bg-gray-100 border-gray-300 divide-gray-300 rounded-md mt-1 z-10 w-[235px] md:w-[212px] max-h-44 divide-y pl-2 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-300"
+							ref={suggestionRef}>
 							{suggestions.map((suggestion) => (
 								<div
-									className="flex items-center p-2 pr-5 cursor-pointer hover:text-blue-400 transition ease-in-out duration-150"
+									className="flex items-center p-2 cursor-pointer hover:text-blue-400 transition ease-in-out duration-150"
 									key={suggestion.id}
 									/* eslint-disable-next-line @typescript-eslint/no-misused-promises,@typescript-eslint/explicit-function-return-type */
 									onClick={() => clickUser(suggestion.id)}>
@@ -92,7 +109,9 @@ export default function Header(): React.JSX.Element {
 										height={30}
 										layout="fixed"
 									/>
-									<p className="text-sm ml-2 truncate">{suggestion.username}</p>
+									<p className="text-sm ml-2 truncate hover:scale-110 transition ease-in-out duration-150">
+										{suggestion.username}
+									</p>
 								</div>
 							))}
 						</div>
@@ -121,7 +140,7 @@ export default function Header(): React.JSX.Element {
 								height={30}
 								/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
 								onClick={() => router.push(`/users/${String(session.user?.uid)}`)}
-								src={String(session.user?.image)}
+								src={userData?.avatar ?? String(session.user?.image)}
 							/>
 						</>
 					) : (

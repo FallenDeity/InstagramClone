@@ -7,6 +7,7 @@ export interface User {
 	avatar: string;
 	followers: string[];
 	following: string[];
+	description: string;
 	timestamp: Timestamp | Date;
 }
 

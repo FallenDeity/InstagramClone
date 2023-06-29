@@ -14,6 +14,8 @@
 - [x] View posts of a particular user.
 - [x] User profile page.
 - [x] Responsive design/Responsive UI.
+- [x] Editable profile with username, picture and bio.
+- [x] Search for users.
 
 # Demo
 
@@ -57,6 +59,12 @@ Internally calls for next to run the project in development mode.
 - `npm run lint:fix` - Runs eslint on the project and fixes the errors.
 - `npm run prettier` - Runs prettier on the project.
 - `npm run prettier:fix` - Runs prettier on the project and fixes the errors.
+
+# Future possibile features
+
+- [ ] Add stories.
+- [ ] Add dark mode.
+- [ ] Add chat feature.
 
 > **Note**  
 > Few more commands are available in `package.json` under `scripts` section.

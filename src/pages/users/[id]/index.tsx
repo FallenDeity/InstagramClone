@@ -7,14 +7,17 @@ import {
 } from "@heroicons/react/24/outline";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import assert from "assert";
-import { collection, doc, getDoc, onSnapshot, orderBy, query, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot, orderBy, query, updateDoc, where } from "firebase/firestore";
 import ErrorPage from "next/error";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import React, { createRef, useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
+import { useRecoilState } from "recoil";
 
+import { editProfileModalState } from "../../../atoms/modalAtom";
+import EditProfileModal from "../../../components/EditProfileModal";
 import Footer from "../../../components/Footer";
 import CustomHead from "../../../components/Head";
 import Header from "../../../components/Header";
@@ -22,25 +25,19 @@ import Modal from "../../../components/Modal";
 import { db } from "../../../utils/firebase";
 import { PostModel, User, UserSession } from "../../../utils/models";
 
-interface CustomUser extends User {
-	posts: PostModel[];
-	bookmarks: PostModel[];
-}
-
-export default function Users({ user }: { user: CustomUser }): React.JSX.Element {
+export default function Users({ user }: { user: User }): React.JSX.Element {
 	user.timestamp = new Date(String(user.timestamp));
-	for (const post of user.posts) {
-		post.timestamp = new Date(String(post.timestamp));
-	}
-	for (const post of user.bookmarks) {
-		post.timestamp = new Date(String(post.timestamp));
-	}
 	const { data: session }: { data: UserSession | null | undefined } = useSession();
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	const [followers, setUserFollowers] = useState<string[]>(user.followers);
 	const [loading, setLoading] = useState(false);
 	const [currentIdx, setCurrentIdx] = useState<number>(0);
+	const [userData, setUserData] = useState<User>();
+	const [posts, setUserPosts] = useState<PostModel[]>([]);
+	const [bookmarks, setUserBookmarks] = useState<PostModel[]>([]);
+	const data = [posts, bookmarks, []];
 	const dataList = createRef<HTMLUListElement>();
+	const setEditProfileOpen = useRecoilState(editProfileModalState)[1];
 	const switchType = (idx: number): void => {
 		setCurrentIdx(idx);
 		for (const li of dataList.current?.children as unknown as HTMLLIElement[]) {
@@ -81,8 +78,12 @@ export default function Users({ user }: { user: CustomUser }): React.JSX.Element
 		}
 		setLoading(false);
 	};
-	const [posts, setUserPosts] = useState<PostModel[]>(user.posts);
-	const [bookmarks, setUserBookmarks] = useState<PostModel[]>(user.bookmarks);
+	useEffect((): void => {
+		onSnapshot(query(collection(db, "users"), where("__name__", "==", user.id)), (snapshot) => {
+			const _userData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
+			setUserData(_userData[0]);
+		});
+	}, [user.id]);
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), async (snapshot) => {
@@ -102,11 +103,10 @@ export default function Users({ user }: { user: CustomUser }): React.JSX.Element
 			}
 		});
 	}, [db, user.id]);
-	const data = [posts, bookmarks, []];
 	if (user.id) {
 		return (
 			<>
-				<CustomHead title={`${user.username} (@${user.username})`} />
+				<CustomHead title={`${String(userData?.username)} (@${String(userData?.username)})`} />
 				<div className="h-screen overflow-y-scroll scrollbar-hide bg-gray-50">
 					<Header />
 					<main className="bg-gray-100 bg-opacity-25 h-screen">
@@ -118,14 +118,14 @@ export default function Users({ user }: { user: CustomUser }): React.JSX.Element
 										height={500}
 										className="w-20 h-20 md:w-40 md:h-40 object-cover rounded-full
                      border-2 border-pink-600 p-1"
-										src={user.avatar}
+										src={userData?.avatar ?? "/user.png"}
 										alt="profile"
 									/>
 								</div>
 								<div className="w-8/12 md:w-7/12 ml-4">
 									<div className="md:flex md:flex-wrap md:items-center mb-4">
 										<h2 className="text-3xl inline-block font-light md:mr-2 mb-2 sm:mb-0">
-											{user.username}
+											{userData?.username}
 										</h2>
 										<span
 											className="inline-block fas fa-certificate fa-lg text-blue-500
@@ -139,6 +139,7 @@ export default function Users({ user }: { user: CustomUser }): React.JSX.Element
 											(session.user?.uid === user.id ? (
 												<>
 													<button
+														onClick={(): void => setEditProfileOpen(true)}
 														className="bg-blue-500 px-2 py-1 font-semibold text-sm mt-2 md:py-1.5 hover:bg-blue-400 text-white
 									               rounded block text-center sm:inline-block sm:mt-0 sm:ml-2 w-full md:w-auto">
 														<Cog6ToothIcon className="h-5 w-5 inline-block mr-1" />
@@ -187,7 +188,7 @@ export default function Users({ user }: { user: CustomUser }): React.JSX.Element
 									</div>
 									<ul className="hidden md:flex space-x-10 mb-4">
 										<li>
-											<span className="font-semibold mr-1">{user.posts.length}</span>
+											<span className="font-semibold mr-1">{posts.length}</span>
 											posts
 										</li>
 										<li>
@@ -200,15 +201,31 @@ export default function Users({ user }: { user: CustomUser }): React.JSX.Element
 										</li>
 									</ul>
 									<div className="hidden md:block">
-										<h1 className="font-semibold">{user.username}</h1>
-										<span>Travel, Nature and Music</span>
-										<p>Lorem ipsum dolor sit amet consectetur</p>
+										<h1 className="font-semibold">{userData?.username}</h1>
+										{!userData?.description ? (
+											<span className="text-gray-600">No bio provided...</span>
+										) : (
+											// replace newlines with <br /> tags
+											<span
+												className="text-gray-600 whitespace-pre-line"
+												dangerouslySetInnerHTML={{
+													__html: userData.description.replace(/\n/g, "<br />"),
+												}}></span>
+										)}
 									</div>
 								</div>
 								<div className="md:hidden text-sm my-2">
-									<h1 className="font-semibold">{user.username}</h1>
-									<span>Travel, Nature and Music</span>
-									<p>Lorem ipsum dolor sit amet consectetur</p>
+									<h1 className="font-semibold">{userData?.username}</h1>
+									{!userData?.description ? (
+										<span className="text-gray-600">No bio provided...</span>
+									) : (
+										// replace newlines with <br /> tags
+										<span
+											className="text-gray-600 whitespace-pre-line"
+											dangerouslySetInnerHTML={{
+												__html: userData.description.replace(/\n/g, "<br />"),
+											}}></span>
+									)}
 								</div>
 							</header>
 							<div className="px-px md:px-3">
@@ -216,7 +233,7 @@ export default function Users({ user }: { user: CustomUser }): React.JSX.Element
 									className="flex md:hidden justify-around space-x-8 border-t
                 text-center p-2 text-gray-600 leading-snug text-sm">
 									<li>
-										<span className="font-semibold text-gray-800 block">{user.posts.length}</span>
+										<span className="font-semibold text-gray-800 block">{posts.length}</span>
 										posts
 									</li>
 									<li>
@@ -292,6 +309,7 @@ export default function Users({ user }: { user: CustomUser }): React.JSX.Element
 							</div>
 						</div>
 					</main>
+					<EditProfileModal />
 					<Modal />
 					<Footer />
 				</div>
@@ -305,10 +323,10 @@ export async function getServerSideProps({
 	params,
 }: {
 	params: { id: string };
-}): Promise<{ props: { user: CustomUser } } | { notFound: boolean }> {
+}): Promise<{ props: { user: User } } | { notFound: boolean }> {
 	const docRef = doc(db, "users", params.id);
 	const docSnap = await getDoc(docRef);
-	const user: CustomUser = docSnap.data() as CustomUser;
+	const user: User = docSnap.data() as User;
 	if (docSnap.exists()) {
 		user.id = docSnap.id;
 		if ("seconds" in user.timestamp) {
@@ -316,8 +334,6 @@ export async function getServerSideProps({
 			// @ts-expect-error
 			user.timestamp = new Date(user.timestamp.seconds * 1000).toISOString();
 		}
-		user.posts = [];
-		user.bookmarks = [];
 		return {
 			props: {
 				user: user,
