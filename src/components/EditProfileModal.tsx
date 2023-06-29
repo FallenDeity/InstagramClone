@@ -52,7 +52,7 @@ export default function EditProfileModal(): React.JSX.Element {
 				});
 			});
 		}
-		if (userNameRef.current.value.trim() !== session.user.name) {
+		if (userNameRef.current.value.trim() && userNameRef.current.value.trim() !== session.user.name) {
 			await updateDoc(doc(db, "users", String(session.user.uid)), {
 				username: userNameRef.current.value.trim(),
 			});
