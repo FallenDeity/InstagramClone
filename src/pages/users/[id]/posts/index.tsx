@@ -14,12 +14,12 @@ import Suggestions from "../../../../components/Suggestions";
 import { db } from "../../../../utils/firebase";
 import { PostModel, User, UserSession } from "../../../../utils/models";
 
-export default function Posts(): React.JSX.Element {
+export default function Posts({ data }: { data: User }): React.JSX.Element {
 	const router = useRouter();
 	const { id } = router.query;
 	const targetAnchor = router.asPath.split("#").length ? router.asPath.split("#")[1] : "";
 	const [posts, setPosts] = useState<PostModel[]>([]);
-	const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useState<User | null>(data);
 	const { data: session }: { data: UserSession | null | undefined } = useSession();
 	useEffect(() => {
 		onSnapshot(doc(db, "users", id as string), (doc) => {
@@ -81,17 +81,24 @@ export async function getServerSideProps({
 	params,
 }: {
 	params: { id: string };
-}): Promise<{ props: { id: string } } | { notFound: boolean }> {
+}): Promise<{ props: { user: User } } | { notFound: boolean }> {
 	const docRef = doc(db, "users", params.id);
 	const docSnap = await getDoc(docRef);
-	if (!docSnap.exists()) {
+	const user: User = docSnap.data() as User;
+	if (docSnap.exists()) {
+		user.id = docSnap.id;
+		if ("seconds" in user.timestamp) {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
+			user.timestamp = new Date(user.timestamp.seconds * 1000).toISOString();
+		}
 		return {
-			notFound: true,
+			props: {
+				user: user,
+			},
 		};
 	}
 	return {
-		props: {
-			id: params.id,
-		},
+		notFound: true,
 	};
 }

@@ -32,7 +32,7 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 	const [followers, setUserFollowers] = useState<string[]>(user.followers);
 	const [loading, setLoading] = useState(false);
 	const [currentIdx, setCurrentIdx] = useState<number>(0);
-	const [userData, setUserData] = useState<User>();
+	const [userData, setUserData] = useState<User>(user);
 	const [posts, setUserPosts] = useState<PostModel[]>([]);
 	const [bookmarks, setUserBookmarks] = useState<PostModel[]>([]);
 	const data = [posts, bookmarks, []];
@@ -106,7 +106,11 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 	if (user.id) {
 		return (
 			<>
-				<CustomHead title={`${String(userData?.username)} (@${String(userData?.username)})`} />
+				<CustomHead
+					title={`${String(userData.username || user.username)} (@${String(
+						userData.username || user.username
+					)})`}
+				/>
 				<div className="h-screen overflow-y-scroll scrollbar-hide bg-gray-50">
 					<Header />
 					<main className="bg-gray-100 bg-opacity-25 h-screen">
@@ -118,14 +122,14 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 										height={500}
 										className="w-20 h-20 md:w-40 md:h-40 object-cover rounded-full
                      border-2 border-pink-600 p-1"
-										src={userData?.avatar ?? "/user.png"}
+										src={userData.avatar || "/user.png"}
 										alt="profile"
 									/>
 								</div>
 								<div className="w-8/12 md:w-7/12 ml-4">
 									<div className="md:flex md:flex-wrap md:items-center mb-4">
 										<h2 className="text-3xl inline-block font-light md:mr-2 mb-2 sm:mb-0">
-											{userData?.username}
+											{userData.username || user.username}
 										</h2>
 										<span
 											className="inline-block fas fa-certificate fa-lg text-blue-500
@@ -201,8 +205,8 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 										</li>
 									</ul>
 									<div className="hidden md:block">
-										<h1 className="font-semibold">{userData?.username}</h1>
-										{!userData?.description ? (
+										<h1 className="font-semibold">{userData.username || user.username}</h1>
+										{!userData.description ? (
 											<span className="text-gray-600">No bio provided...</span>
 										) : (
 											// replace newlines with <br /> tags
@@ -215,8 +219,8 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 									</div>
 								</div>
 								<div className="md:hidden text-sm my-2">
-									<h1 className="font-semibold">{userData?.username}</h1>
-									{!userData?.description ? (
+									<h1 className="font-semibold">{userData.username || user.username}</h1>
+									{!userData.description ? (
 										<span className="text-gray-600">No bio provided...</span>
 									) : (
 										// replace newlines with <br /> tags
