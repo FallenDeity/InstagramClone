@@ -28,7 +28,7 @@ export default function MiniProfile(): React.JSX.Element {
 		<div className="flex items-center justify-between mt-14 ml-10 bg-gray-50 p-3 border rounded-md shadow-sm">
 			<Image
 				className="rounded-full border p-[2px] w-16 h-16"
-				src={String(userData?.avatar)}
+				src={String(userData?.avatar ?? session?.user?.image)}
 				alt="Profile Picture"
 				width={30}
 				height={30}
@@ -38,7 +38,7 @@ export default function MiniProfile(): React.JSX.Element {
 					className="font-bold cursor-pointer"
 					/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
 					onClick={() => router.push(`/users/${String(session?.user?.uid)}`)}>
-					{userData?.username}
+					{userData?.username ?? session?.user?.name}
 				</h2>
 				<h3 className="text-sm text-gray-400">Welcome to Instagram</h3>
 			</div>

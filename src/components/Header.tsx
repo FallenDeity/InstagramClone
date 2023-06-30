@@ -33,8 +33,8 @@ export default function Header(): React.JSX.Element {
 		}
 		const text = searchBarRef.current?.value;
 		onSnapshot(query(collection(db, "users"), where("username", ">=", text)), (snapshot) => {
+			suggestionRef.current?.classList.add("border");
 			const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
-			suggestions.length !== 0 && suggestionRef.current?.classList.add("border");
 			setSuggestions(users);
 		});
 	};

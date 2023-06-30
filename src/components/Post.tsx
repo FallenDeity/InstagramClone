@@ -127,8 +127,8 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 			{/* Header */}
 			<div className="flex items-center p-3">
 				<Image
-					src={String(postUserData?.avatar)}
-					alt={String(postUserData?.username)}
+					src={String(postUserData?.avatar ?? session?.user?.image)}
+					alt={String(postUserData?.username ?? session?.user?.name)}
 					width={30}
 					height={30}
 					/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
@@ -140,7 +140,7 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 						className="font-semibold text-base cursor-pointer"
 						/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
 						onClick={() => router.push(`/users/${String(post.userid)}`)}>
-						{postUserData?.username}
+						{postUserData?.username ?? session?.user?.name}
 					</h2>
 					<Moment fromNow className="text-xs text-gray-500">
 						{new Date("seconds" in post.timestamp ? post.timestamp.seconds * 1000 : post.timestamp)}
@@ -152,7 +152,7 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 			{/* Image */}
 			<Image
 				src={post.image || ""}
-				alt={String(postUserData?.username)}
+				alt={String(postUserData?.username ?? session?.user?.name)}
 				className="object-cover w-full"
 				width={30}
 				height={30}
@@ -187,7 +187,7 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 						{likes.length} {likes.length === 1 ? "like" : "likes"}
 					</p>
 				)}
-				<span className="font-bold mr-1">{postUserData?.username}</span>
+				<span className="font-bold mr-1">{postUserData?.username ?? session?.user?.name}</span>
 				{post.caption}
 			</p>
 			{/* Comments */}

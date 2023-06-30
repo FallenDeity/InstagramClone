@@ -40,7 +40,12 @@ export default function Stories(): React.JSX.Element {
 	}, []);
 	return (
 		<div className="flex space-x-2 p-6 bg-white mt-4 md:mt-8 border-gray-200 rounded-sm overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-200 shadow-sm">
-			{session && <Story image={String(userData?.avatar)} username={String(userData?.username)} />}
+			{session && (
+				<Story
+					image={String(userData?.avatar ?? session.user?.image)}
+					username={String(userData?.username ?? session.user?.name)}
+				/>
+			)}
 			{suggestions.map((suggestion) => (
 				<Story key={suggestion.id} image={suggestion.avatar} username={suggestion.username} />
 			))}
