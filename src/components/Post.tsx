@@ -52,7 +52,7 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 			const _userData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
 			setPostUserData(_userData[0]);
 		});
-	}, [session, post.userid]);
+	}, [session, post.userid, db]);
 	useEffect((): void => {
 		onSnapshot(query(collection(db, "posts", post.id, "likes"), orderBy("timestamp", "desc")), (snapshot) => {
 			const _likes = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as LikeModel));

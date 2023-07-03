@@ -23,7 +23,7 @@ export default function MiniProfile(): React.JSX.Element {
 				}
 			);
 		}
-	}, [session]);
+	}, [session, db]);
 	return (
 		<div className="flex items-center justify-between mt-14 ml-10 bg-gray-50 p-3 border rounded-md shadow-sm">
 			<Image

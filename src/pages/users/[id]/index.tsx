@@ -83,7 +83,7 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 			const _userData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User));
 			setUserData(_userData[0]);
 		});
-	}, [user.id]);
+	}, [user.id, db]);
 	useEffect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), async (snapshot) => {

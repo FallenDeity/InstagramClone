@@ -21,7 +21,7 @@ export default function Stories(): React.JSX.Element {
 				}
 			);
 		}
-	}, [session]);
+	}, [session, db]);
 	useEffect(() => {
 		const suggestions: User[] = [];
 		for (let i = 0; i < 20; i++) {
