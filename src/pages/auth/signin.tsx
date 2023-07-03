@@ -2,6 +2,7 @@ import Image from "next/image";
 import { ClientSafeProvider, getProviders, signIn as SignIntoProvider, SignInResponse } from "next-auth/react";
 import React from "react";
 
+import Footer from "../../components/Footer";
 import CustomHead from "../../components/Head";
 import Header from "../../components/Header";
 
@@ -38,6 +39,7 @@ export default function signIn({ providers }: { providers: Provider }): React.JS
 					))}
 				</div>
 			</div>
+			<Footer />
 		</>
 	);
 }

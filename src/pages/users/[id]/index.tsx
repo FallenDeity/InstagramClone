@@ -16,7 +16,7 @@ import React, { createRef, useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import { useRecoilState } from "recoil";
 
-import { editProfileModalState } from "../../../atoms/modalAtom";
+import { editProfileModalState } from "../../../components/atoms/modalAtom";
 import EditProfileModal from "../../../components/EditProfileModal";
 import Footer from "../../../components/Footer";
 import CustomHead from "../../../components/Head";
