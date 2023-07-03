@@ -5,7 +5,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { useRecoilState } from "recoil";
 
-import { UserSession } from "../utils/models";
+import { UserSession } from "@/utils/models";
+
 import { modalState } from "./atoms/modalAtom";
 
 export default function Footer(): React.JSX.Element {

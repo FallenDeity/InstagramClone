@@ -2,7 +2,7 @@ import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import NextAuth, { Session } from "next-auth";
 import Google from "next-auth/providers/google";
 
-import { db } from "../../../utils/firebase";
+import { db } from "@/utils/firebase";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 export default NextAuth({

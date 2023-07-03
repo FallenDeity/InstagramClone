@@ -13,8 +13,9 @@ import { signIn, useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 
-import { db } from "../utils/firebase";
-import { User, UserSession } from "../utils/models";
+import { db } from "@/utils/firebase";
+import { User, UserSession } from "@/utils/models";
+
 import { modalState } from "./atoms/modalAtom";
 
 export default function Header(): React.JSX.Element {

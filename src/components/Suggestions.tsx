@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-import { User } from "../utils/models";
+import { User } from "@/utils/models";
 
 interface CompanyUser extends User {
 	company: string;

@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
-import { db } from "../utils/firebase";
-import { User, UserSession } from "../utils/models";
+import { db } from "@/utils/firebase";
+import { User, UserSession } from "@/utils/models";
 
 export default function MiniProfile(): React.JSX.Element {
 	const { data: session }: { data: UserSession | null | undefined } = useSession();

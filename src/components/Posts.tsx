@@ -1,8 +1,9 @@
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 
-import { db } from "../utils/firebase";
-import { PostModel } from "../utils/models";
+import { db } from "@/utils/firebase";
+import { PostModel } from "@/utils/models";
+
 import Post from "./Post";
 
 export default function Posts(): React.JSX.Element {

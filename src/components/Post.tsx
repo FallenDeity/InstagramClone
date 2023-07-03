@@ -26,8 +26,8 @@ import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
 
-import { db } from "../utils/firebase";
-import { BookmarkModel, CommentModel, LikeModel, PostModel, User, UserSession } from "../utils/models";
+import { db } from "@/utils/firebase";
+import { BookmarkModel, CommentModel, LikeModel, PostModel, User, UserSession } from "@/utils/models";
 
 export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 	const { data: session }: { data: UserSession | null | undefined } = useSession();

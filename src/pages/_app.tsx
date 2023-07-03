@@ -1,11 +1,11 @@
-import "../styles/globals.css";
+import "@/styles/globals.css";
 
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import React from "react";
 import { RecoilRoot } from "recoil";
 
-import CustomHead from "../components/Head";
+import CustomHead from "@/components/Head";
 
 interface AppProps {
 	Component: React.FC;

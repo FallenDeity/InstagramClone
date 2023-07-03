@@ -2,9 +2,9 @@ import Image from "next/image";
 import { ClientSafeProvider, getProviders, signIn as SignIntoProvider, SignInResponse } from "next-auth/react";
 import React from "react";
 
-import Footer from "../../components/Footer";
-import CustomHead from "../../components/Head";
-import Header from "../../components/Header";
+import Footer from "@/components/Footer";
+import CustomHead from "@/components/Head";
+import Header from "@/components/Header";
 
 interface Provider {
 	id: string;

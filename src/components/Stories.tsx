@@ -3,8 +3,9 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
-import { db } from "../utils/firebase";
-import { User, UserSession } from "../utils/models";
+import { db } from "@/utils/firebase";
+import { User, UserSession } from "@/utils/models";
+
 import Story from "./Story";
 
 export default function Stories(): React.JSX.Element {

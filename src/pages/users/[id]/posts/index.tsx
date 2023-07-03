@@ -3,16 +3,16 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
-import Footer from "../../../../components/Footer";
-import CustomHead from "../../../../components/Head";
-import Header from "../../../../components/Header";
-import MiniProfile from "../../../../components/MiniProfile";
-import Modal from "../../../../components/Modal";
-import Post from "../../../../components/Post";
-import Stories from "../../../../components/Stories";
-import Suggestions from "../../../../components/Suggestions";
-import { db } from "../../../../utils/firebase";
-import { PostModel, User, UserSession } from "../../../../utils/models";
+import Footer from "@/components/Footer";
+import CustomHead from "@/components/Head";
+import Header from "@/components/Header";
+import MiniProfile from "@/components/MiniProfile";
+import Modal from "@/components/Modal";
+import Post from "@/components/Post";
+import Stories from "@/components/Stories";
+import Suggestions from "@/components/Suggestions";
+import { db } from "@/utils/firebase";
+import { PostModel, User, UserSession } from "@/utils/models";
 
 export default function Posts({ data }: { data: User }): React.JSX.Element {
 	const router = useRouter();

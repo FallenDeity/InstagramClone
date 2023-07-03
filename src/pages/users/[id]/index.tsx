@@ -16,14 +16,14 @@ import React, { createRef, useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import { useRecoilState } from "recoil";
 
-import { editProfileModalState } from "../../../components/atoms/modalAtom";
-import EditProfileModal from "../../../components/EditProfileModal";
-import Footer from "../../../components/Footer";
-import CustomHead from "../../../components/Head";
-import Header from "../../../components/Header";
-import Modal from "../../../components/Modal";
-import { db } from "../../../utils/firebase";
-import { PostModel, User, UserSession } from "../../../utils/models";
+import { editProfileModalState } from "@/components/atoms/modalAtom";
+import EditProfileModal from "@/components/EditProfileModal";
+import Footer from "@/components/Footer";
+import CustomHead from "@/components/Head";
+import Header from "@/components/Header";
+import Modal from "@/components/Modal";
+import { db } from "@/utils/firebase";
+import { PostModel, User, UserSession } from "@/utils/models";
 
 export default function Users({ user }: { user: User }): React.JSX.Element {
 	user.timestamp = new Date(String(user.timestamp));
