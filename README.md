@@ -16,6 +16,7 @@
 - [x] Responsive design/Responsive UI.
 - [x] Editable profile with username, picture and bio.
 - [x] Search for users.
+- [x] Add skeleton loaders.
 
 # Demo
 

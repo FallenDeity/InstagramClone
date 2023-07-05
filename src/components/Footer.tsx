@@ -5,9 +5,8 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { useRecoilState } from "recoil";
 
+import { modalState } from "@/components/atoms/modalAtom";
 import { UserSession } from "@/utils/models";
-
-import { modalState } from "./atoms/modalAtom";
 
 export default function Footer(): React.JSX.Element {
 	const { data: session }: { data: UserSession | null | undefined } = useSession();

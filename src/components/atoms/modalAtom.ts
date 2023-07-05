@@ -9,3 +9,5 @@ export const editProfileModalState = atom({
 	key: "editProfileModalState",
 	default: false,
 });
+
+export default { modalState, editProfileModalState };

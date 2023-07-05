@@ -1,3 +1,5 @@
+import "react-loading-skeleton/dist/skeleton.css";
+
 import {
 	ArrowsPointingOutIcon,
 	BookmarkIcon,
@@ -13,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import React, { createRef, useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
 import { BeatLoader } from "react-spinners";
 import { useRecoilState } from "recoil";
 
@@ -89,7 +92,7 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 		onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), async (snapshot) => {
 			const _posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as PostModel));
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			const _filteredPosts = _posts.filter((post) => post.userid === user.id && post.image && post.timestamp);
+			const _filteredPosts = _posts.filter((post) => post.userid === user.id);
 			setUserPosts(_filteredPosts);
 			const _bookmarks: PostModel[] = [];
 			for (const _doc of _posts) {
@@ -98,8 +101,7 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 					_bookmarks.push(_doc);
 				}
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-				const _filteredBookmarks = _bookmarks.filter((post) => post.image && post.timestamp);
-				setUserBookmarks(_filteredBookmarks);
+				setUserBookmarks(_bookmarks);
 			}
 		});
 	}, [db, user.id]);
@@ -129,7 +131,7 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 								<div className="w-8/12 md:w-7/12 ml-4">
 									<div className="md:flex md:flex-wrap md:items-center mb-4">
 										<h2 className="text-3xl inline-block font-light md:mr-2 mb-2 sm:mb-0">
-											{userData.username || user.username}
+											{userData.username || user.username || <Skeleton />}
 										</h2>
 										<span
 											className="inline-block fas fa-certificate fa-lg text-blue-500
@@ -205,7 +207,9 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 										</li>
 									</ul>
 									<div className="hidden md:block">
-										<h1 className="font-semibold">{userData.username || user.username}</h1>
+										<h1 className="font-semibold">
+											{userData.username || user.username || <Skeleton />}
+										</h1>
 										{!userData.description ? (
 											<span className="text-gray-600">No bio provided...</span>
 										) : (
@@ -292,14 +296,17 @@ export default function Users({ user }: { user: User }): React.JSX.Element {
 										<div className="w-1/3 p-px md:px-3 cursor-pointer" key={post.id}>
 											<Link href={`/users/${post.userid}/posts#${post.id}`}>
 												<article className="post bg-gray-100 text-white relative pb-full md:mb-6">
-													<Image
-														className="w-full h-full absolute left-0 top-0 object-cover"
-														width={500}
-														height={500}
-														src={post.image}
-														alt="image"
-													/>
-
+													{post.image ? (
+														<Image
+															className="w-full h-full absolute left-0 top-0 object-cover"
+															width={500}
+															height={500}
+															src={post.image}
+															alt="image"
+														/>
+													) : (
+														<Skeleton className="w-full h-full absolute left-0 top-0 object-cover" />
+													)}
 													<i className="fas fa-square absolute right-0 top-0 m-1"></i>
 													<div
 														className="overlay bg-gray-800 bg-opacity-25 w-full h-full absolute

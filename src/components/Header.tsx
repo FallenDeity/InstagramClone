@@ -1,3 +1,5 @@
+import "react-loading-skeleton/dist/skeleton.css";
+
 import { HomeIcon } from "@heroicons/react/20/solid";
 import {
 	HeartIcon,
@@ -11,12 +13,12 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
+import Skeleton from "react-loading-skeleton";
 import { useRecoilState } from "recoil";
 
+import { modalState } from "@/components/atoms/modalAtom";
 import { db } from "@/utils/firebase";
 import { User, UserSession } from "@/utils/models";
-
-import { modalState } from "./atoms/modalAtom";
 
 export default function Header(): React.JSX.Element {
 	const { data: session }: { data: UserSession | null | undefined } = useSession();
@@ -133,16 +135,20 @@ export default function Header(): React.JSX.Element {
 							<PlusCircleIcon className="navBtn" onClick={(): void => setOpen(true)} />
 							<UserGroupIcon className="navBtn" />
 							<HeartIcon className="navBtn" />
-							<Image
-								/* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-								alt="Profile Picture"
-								className="rounded-full cursor-pointer h-7"
-								width={30}
-								height={30}
-								/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
-								onClick={() => router.push(`/users/${String(session.user?.uid)}`)}
-								src={userData?.avatar ?? String(session.user?.image)}
-							/>
+							{userData?.avatar ?? session.user?.image ? (
+								<Image
+									/* eslint-disable-next-line @typescript-eslint/no-misused-promises */
+									alt="Profile Picture"
+									className="rounded-full cursor-pointer h-7"
+									width={30}
+									height={30}
+									/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
+									onClick={() => router.push(`/users/${String(session.user?.uid)}`)}
+									src={String(userData?.avatar ?? session.user?.image)}
+								/>
+							) : (
+								<Skeleton circle={true} height={30} width={30} />
+							)}
 						</>
 					) : (
 						<button

@@ -12,8 +12,7 @@ export default function Posts(): React.JSX.Element {
 		onSnapshot(query(collection(db, "posts"), orderBy("timestamp", "desc")), (snapshot) => {
 			const _posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as PostModel));
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			const _filteredPosts = _posts.filter((post) => post.image && post.timestamp);
-			setPosts(_filteredPosts);
+			setPosts(_posts ?? []);
 		});
 	}, [db]);
 	return (

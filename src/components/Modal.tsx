@@ -12,10 +12,9 @@ import { BeatLoader } from "react-spinners";
 import { toast, ToastContainer } from "react-toastify";
 import { useRecoilState } from "recoil";
 
+import { modalState } from "@/components/atoms/modalAtom";
 import { db, storage } from "@/utils/firebase";
 import { UserSession } from "@/utils/models";
-
-import { modalState } from "./atoms/modalAtom";
 
 interface UploadEvent extends React.ChangeEvent<HTMLInputElement> {
 	target: HTMLInputElement & EventTarget;

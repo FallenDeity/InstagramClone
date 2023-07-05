@@ -1,3 +1,5 @@
+import "react-loading-skeleton/dist/skeleton.css";
+
 import {
 	BookmarkIcon,
 	ChatBubbleOvalLeftIcon,
@@ -24,6 +26,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
 import Moment from "react-moment";
 
 import { db } from "@/utils/firebase";
@@ -126,37 +129,50 @@ export default function Post({ post }: { post: PostModel }): React.JSX.Element {
 		<div className="bg-white my-7 border rounded-md md:shadow-lg pb-3" id={post.id}>
 			{/* Header */}
 			<div className="flex items-center p-3">
-				<Image
-					src={String(postUserData?.avatar ?? session?.user?.image)}
-					alt={String(postUserData?.username ?? session?.user?.name)}
-					width={30}
-					height={30}
-					/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
-					onClick={() => router.push(`/users/${String(post.userid)}`)}
-					className="rounded-full h-12 w-12 object-contain p-[1.5px] border border-red-500 mr-3 cursor-pointer"
-				/>
+				{postUserData?.username ?? session?.user?.name ? (
+					<Image
+						src={String(postUserData?.avatar ?? session?.user?.image)}
+						alt={String(postUserData?.username ?? session?.user?.name)}
+						width={30}
+						height={30}
+						/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
+						onClick={() => router.push(`/users/${String(post.userid)}`)}
+						className="rounded-full h-12 w-12 object-contain p-[1.5px] border border-red-500 mr-3 cursor-pointer"
+					/>
+				) : (
+					<Skeleton circle height={30} width={30} className="h-12 w-12 mr-3" />
+				)}
 				<div className="flex flex-col">
 					<h2
 						className="font-semibold text-base cursor-pointer"
 						/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/no-misused-promises */
 						onClick={() => router.push(`/users/${String(post.userid)}`)}>
-						{postUserData?.username ?? session?.user?.name}
+						{postUserData?.username ?? session?.user?.name ?? <Skeleton width={100} />}
 					</h2>
-					<Moment fromNow className="text-xs text-gray-500">
-						{new Date("seconds" in post.timestamp ? post.timestamp.seconds * 1000 : post.timestamp)}
-					</Moment>
+					{/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
+					{post.timestamp ? (
+						<Moment fromNow className="text-xs text-gray-500">
+							{new Date("seconds" in post.timestamp ? post.timestamp.seconds * 1000 : post.timestamp)}
+						</Moment>
+					) : (
+						<Skeleton width={100} />
+					)}
 				</div>
 				<div className="flex-grow" />
 				<EllipsisHorizontalIcon className="postBtn" />
 			</div>
 			{/* Image */}
-			<Image
-				src={post.image || ""}
-				alt={String(postUserData?.username ?? session?.user?.name)}
-				className="object-cover w-full"
-				width={30}
-				height={30}
-			/>
+			{post.image ? (
+				<Image
+					src={post.image}
+					alt={String(postUserData?.username ?? session?.user?.name)}
+					className="object-cover w-full"
+					width={30}
+					height={30}
+				/>
+			) : (
+				<Skeleton className="w-full h-96" />
+			)}
 			{/* Buttons */}
 			{session && (
 				<div className="flex justify-between px-4 pt-4">
